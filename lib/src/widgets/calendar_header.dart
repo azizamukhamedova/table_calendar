@@ -16,11 +16,15 @@ class CalendarHeader extends StatelessWidget {
   final HeaderStyle headerStyle;
   final VoidCallback onLeftChevronTap;
   final VoidCallback onRightChevronTap;
+  final VoidCallback onLeftChevronTapYear;
+  final VoidCallback onRightChevronTapYear;
   final VoidCallback onHeaderTap;
   final VoidCallback onHeaderLongPress;
   final ValueChanged<CalendarFormat> onFormatButtonTap;
   final Map<CalendarFormat, String> availableCalendarFormats;
   final DayBuilder? headerTitleBuilder;
+  final Widget leftIcon;
+  final Widget rightIcon;
 
   const CalendarHeader({
     Key? key,
@@ -30,17 +34,23 @@ class CalendarHeader extends StatelessWidget {
     required this.headerStyle,
     required this.onLeftChevronTap,
     required this.onRightChevronTap,
+    required this.onLeftChevronTapYear,
+    required this.onRightChevronTapYear,
     required this.onHeaderTap,
     required this.onHeaderLongPress,
     required this.onFormatButtonTap,
     required this.availableCalendarFormats,
     this.headerTitleBuilder,
+    required this.leftIcon,
+    required this.rightIcon,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final text = headerStyle.titleTextFormatter?.call(focusedMonth, locale) ??
         DateFormat.yMMMM(locale).format(focusedMonth);
+    final year = headerStyle.titleTextFormatter?.call(focusedMonth, locale) ??
+        DateFormat.y(locale).format(focusedMonth);
 
     return Container(
       decoration: headerStyle.decoration,
@@ -48,49 +58,54 @@ class CalendarHeader extends StatelessWidget {
       padding: headerStyle.headerPadding,
       child: Row(
         mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          if (headerStyle.leftChevronVisible)
-            CustomIconButton(
-              icon: headerStyle.leftChevronIcon,
-              onTap: onLeftChevronTap,
-              margin: headerStyle.leftChevronMargin,
-              padding: headerStyle.leftChevronPadding,
-            ),
-          Expanded(
-            child: headerTitleBuilder?.call(context, focusedMonth) ??
-                GestureDetector(
-                  onTap: onHeaderTap,
-                  onLongPress: onHeaderLongPress,
-                  child: Text(
-                    text,
-                    style: headerStyle.titleTextStyle,
-                    textAlign: headerStyle.titleCentered
-                        ? TextAlign.center
-                        : TextAlign.start,
-                  ),
-                ),
-          ),
-          if (headerStyle.formatButtonVisible &&
-              availableCalendarFormats.length > 1)
-            Padding(
-              padding: const EdgeInsets.only(left: 8.0),
-              child: FormatButton(
-                onTap: onFormatButtonTap,
-                availableCalendarFormats: availableCalendarFormats,
-                calendarFormat: calendarFormat,
-                decoration: headerStyle.formatButtonDecoration,
-                padding: headerStyle.formatButtonPadding,
-                textStyle: headerStyle.formatButtonTextStyle,
-                showsNextFormat: headerStyle.formatButtonShowsNext,
+          Row(
+            children: [
+              CustomIconButton(
+                icon: leftIcon,
+                onTap: onLeftChevronTap,
+                margin: headerStyle.leftChevronMargin,
+                padding: headerStyle.leftChevronPadding,
               ),
-            ),
-          if (headerStyle.rightChevronVisible)
-            CustomIconButton(
-              icon: headerStyle.rightChevronIcon,
-              onTap: onRightChevronTap,
-              margin: headerStyle.rightChevronMargin,
-              padding: headerStyle.rightChevronPadding,
-            ),
+              Text(
+                text,
+                style: headerStyle.titleTextStyle,
+                textAlign: headerStyle.titleCentered
+                    ? TextAlign.center
+                    : TextAlign.start,
+              ),
+              CustomIconButton(
+                icon: rightIcon,
+                onTap: onRightChevronTap,
+                margin: headerStyle.rightChevronMargin,
+                padding: headerStyle.rightChevronPadding,
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              CustomIconButton(
+                icon: leftIcon,
+                onTap: onLeftChevronTapYear,
+                margin: headerStyle.leftChevronMargin,
+                padding: headerStyle.leftChevronPadding,
+              ),
+              Text(
+                year,
+                style: headerStyle.titleTextStyle,
+                textAlign: headerStyle.titleCentered
+                    ? TextAlign.center
+                    : TextAlign.start,
+              ),
+              CustomIconButton(
+                icon: rightIcon,
+                onTap: onRightChevronTapYear,
+                margin: headerStyle.rightChevronMargin,
+                padding: headerStyle.rightChevronPadding,
+              ),
+            ],
+          ),
         ],
       ),
     );

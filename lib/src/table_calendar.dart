@@ -201,6 +201,10 @@ class TableCalendar<T> extends StatefulWidget {
   /// Called when the calendar is created. Exposes its PageController.
   final void Function(PageController pageController)? onCalendarCreated;
 
+  final Widget dividerWidget;
+  final Widget leftIcon;
+  final Widget rightIcon;
+
   /// Creates a `TableCalendar` widget.
   TableCalendar({
     Key? key,
@@ -256,6 +260,9 @@ class TableCalendar<T> extends StatefulWidget {
     this.onPageChanged,
     this.onFormatChanged,
     this.onCalendarCreated,
+    required this.dividerWidget,
+    required this.leftIcon,
+    required this.rightIcon,
   })  : assert(availableCalendarFormats.keys.contains(calendarFormat)),
         assert(availableCalendarFormats.length <= CalendarFormat.values.length),
         assert(weekendDays.isNotEmpty
@@ -441,6 +448,30 @@ class _TableCalendarState<T> extends State<TableCalendar<T>> {
     );
   }
 
+  void _onLeftChevronTapYear() {
+    if (_pageController.page != null) {
+      _pageController.jumpToPage(
+        _pageController.page!.toInt() - 12,
+      );
+    } else {
+      _pageController.jumpToPage(
+        0,
+      );
+    }
+  }
+
+  void _onRightChevronTapYear() {
+    if (_pageController.page != null) {
+      _pageController.jumpToPage(
+        _pageController.page!.toInt() + 12,
+      );
+    } else {
+      _pageController.jumpToPage(
+        0,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -455,12 +486,16 @@ class _TableCalendarState<T> extends State<TableCalendar<T>> {
                 onLeftChevronTap: _onLeftChevronTap,
                 onRightChevronTap: _onRightChevronTap,
                 onHeaderTap: () => widget.onHeaderTapped?.call(value),
+                onLeftChevronTapYear: _onLeftChevronTapYear,
+                onRightChevronTapYear: _onRightChevronTapYear,
                 onHeaderLongPress: () =>
                     widget.onHeaderLongPressed?.call(value),
                 headerStyle: widget.headerStyle,
                 availableCalendarFormats: widget.availableCalendarFormats,
                 calendarFormat: widget.calendarFormat,
                 locale: widget.locale,
+                leftIcon: widget.leftIcon,
+                rightIcon: widget.rightIcon,
                 onFormatButtonTap: (format) {
                   assert(
                     widget.onFormatChanged != null,
@@ -472,6 +507,7 @@ class _TableCalendarState<T> extends State<TableCalendar<T>> {
               );
             },
           ),
+        widget.dividerWidget,
         Flexible(
           flex: widget.shouldFillViewport ? 1 : 0,
           child: TableCalendarBase(
