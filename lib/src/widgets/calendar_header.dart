@@ -48,7 +48,7 @@ class CalendarHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final text = headerStyle.titleTextFormatter?.call(focusedMonth, locale) ??
-        DateFormat.yMMMM(locale).format(focusedMonth);
+        DateFormat.MMMM(locale).format(focusedMonth);
     final year = headerStyle.titleTextFormatter?.call(focusedMonth, locale) ??
         DateFormat.y(locale).format(focusedMonth);
 
